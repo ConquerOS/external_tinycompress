@@ -81,6 +81,8 @@ struct compr_gapless_mdata {
 
 struct compress;
 struct snd_compr_tstamp;
+union snd_codec_options;
+struct snd_compr_metadata;
 
 #ifdef ENABLE_EXTENDED_COMPRESS_FORMAT
 union snd_codec_options;
@@ -254,6 +256,18 @@ int compress_set_next_track_param(struct compress *compress,
 #endif
 
 /*
+ * compress_set_next_track_param: set params of next compress stream in gapless
+ *
+ * return 0 on success, negative on error
+ *
+ * @compress: compress stream for which codec options has to be set
+ * @codec_options: codec options of compress stream based on codec type
+ */
+
+int compress_set_next_track_param(struct compress *compress,
+			union snd_codec_options *codec_options);
+
+/*
  * is_codec_supported:check if the given codec is supported
  * returns true when supported, false if not
  *
@@ -308,6 +322,17 @@ const char *compress_get_error(struct compress *compress);
 
 /* utility functions */
 unsigned int compress_get_alsa_rate(unsigned int rate);
+
+ /*
+  * compress_set_codec_params: set codec config intended for next track
+  * if DSP has support to switch CODEC config during gapless playback
+  * This API is expected to be called after compress_next_track is called
+  * return 0 on success, negative on error
+  *
+  * @compress: compress stream for which metadata has to set
+  * @codec: codec configuration for next track
+  */
+int compress_set_codec_params(struct compress *compress, struct snd_codec *codec);
 
 #ifdef ENABLE_EXTENDED_COMPRESS_FORMAT
 /* set metadata */
